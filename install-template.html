@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LMC Front Page Builder</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; background: #FFFFFF; color: #262626; font-family: "Lato", "Helvetica Neue", Arial, sans-serif; line-height: 1.55; }
+  main { max-width: 760px; margin: 0 auto; padding: 2rem 16px 3rem; }
+  h1 { color: #A6192E; margin: 0 0 .25rem; font-size: 1.9rem; }
+  .sub { color: #54585A; margin: 0 0 2rem; font-size: 1.1rem; }
+  h2 { font-size: 1.25rem; border-bottom: 2px solid #54585A; padding-bottom: .3rem; margin-top: 2.25rem; }
+  .install { background: #F4F4F4; border-left: 6px solid #A6192E; border-radius: 4px; padding: 1.25rem; }
+  .bm { display: inline-block; background: #A6192E; color: #FFFFFF; font-weight: 700; text-decoration: none;
+        padding: .8rem 1.25rem; border-radius: 8px; border: 2px dashed #FFFFFF; outline: 2px solid #A6192E; cursor: grab; }
+  .bm:focus-visible, button:focus-visible { outline: 3px solid #262626; outline-offset: 3px; }
+  button { font: inherit; font-weight: 700; background: #FFFFFF; color: #262626; border: 2px solid #54585A;
+           border-radius: 6px; padding: .45rem .9rem; cursor: pointer; }
+  ol li { margin-bottom: .5rem; }
+  .note { font-size: .92rem; color: #54585A; }
+  #copied { color: #1d6b2f; font-weight: 700; margin-left: .5rem; }
+  code { background: #F4F4F4; padding: 0 .25rem; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>LMC Front Page Builder</h1>
+  <p class="sub">A bookmarklet that builds a course front page with buttons linked to your Canvas modules. Version @@VERSION@@.</p>
+
+  <div class="install">
+    <p style="margin-top:0"><strong>Install:</strong> show your bookmarks bar (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> in Chrome and Edge), then drag this button onto it.</p>
+    <p><a class="bm" id="bm" href="#">LMC Front Page</a></p>
+    <p class="note" style="margin-bottom:0">If dragging doesn't work, copy the code below. Then create a new bookmark, name it <em>LMC Front Page</em>, and paste the code into the URL field.<br>
+      <button type="button" id="copy" style="margin-top:.5rem">Copy bookmarklet code</button><span id="copied" role="status" aria-live="polite"></span></p>
+  </div>
+
+  <h2>How to use it</h2>
+  <ol>
+    <li>In Canvas, open any page inside your course, such as the Modules page.</li>
+    <li>Click the <strong>LMC Front Page</strong> bookmark. The builder lists every module in the course.</li>
+    <li>Enter how many buttons you want, or check the modules you want. Then edit the button text, choose red (course content) or gray (course support), and reorder them with the arrows.</li>
+    <li>Fill in the title, subtitle and welcome text, and check the live preview.</li>
+    <li>Click <strong>Copy code</strong>. Edit your front page, open the HTML editor (<code>&lt;/&gt;</code>), paste the code, and save.</li>
+  </ol>
+
+  <h2>Good to know</h2>
+  <ul>
+    <li>The builder only <em>reads</em> your course through Canvas, using your current login. It changes nothing until you paste and save the code yourself.</li>
+    <li>The generated code uses inline styles only, because Canvas removes <code>&lt;style&gt;</code> blocks.</li>
+    <li>Buttons link to <code>/courses/ID/modules/MODULE_ID</code>. Canvas normally updates links in this form during course copy. Check one button in the new course after your first copy.</li>
+    <li>If you add or rename modules later, run the builder again and paste the new code.</li>
+  </ul>
+</main>
+
+<script type="text/plain" id="src">
+/*@@SOURCE@@*/
+</script>
+<script>
+  var code = 'javascript:' + encodeURIComponent(document.getElementById('src').textContent.trim());
+  var bm = document.getElementById('bm');
+  bm.href = code;
+  bm.addEventListener('click', function (e) {
+    e.preventDefault();
+    alert('Drag this button to your bookmarks bar, then click it while you are viewing your Canvas course.');
+  });
+  document.getElementById('copy').addEventListener('click', function () {
+    navigator.clipboard.writeText(code).then(function () {
+      document.getElementById('copied').textContent = 'Copied.';
+    });
+  });
+</script>
+</body>
+</html>
