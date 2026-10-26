@@ -10,7 +10,7 @@
 (async function () {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const HOST_ID = 'lmc-front-page-builder';
   const existing = document.getElementById(HOST_ID);
   if (existing) { existing.remove(); }
@@ -169,13 +169,14 @@
   function buttonStyle(kind) {
     return 'flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; ' +
       'min-height: 64px; padding: 0.9rem 1rem; background-color: ' + COLORS[kind] + '; color: #FFFFFF; ' +
-      'font-weight: bold; font-size: 1rem; text-decoration: none; border-radius: 8px;';
+      'font-weight: bold; font-size: 1rem; text-decoration: none; border-radius: 8px; ' +
+      'box-sizing: border-box; min-width: 0; overflow-wrap: break-word;';
   }
 
   function buildHTML() {
     const out = [];
     out.push('<!' + '-- Made with LMC Front Page Builder v' + VERSION + ' --' + '>');  // split so it can be embedded in index.html
-    out.push('<div style="max-width: 900px; margin: 0 auto; color: #262626; line-height: 1.5;">');
+    out.push('<div style="max-width: 900px; margin: 0 auto; color: #262626; line-height: 1.5; overflow-wrap: break-word;">');
     if (state.title.trim()) {
       out.push('  <h2 style="color: #A6192E; font-size: 1.9rem; margin-bottom: 0.25rem;">' + esc(state.title.trim()) + '</h2>');
     }
@@ -196,13 +197,26 @@
       if (state.navHeading.trim()) {
         out.push('  <h3 style="font-size: 1.3rem; border-bottom: 2px solid #54585A; padding-bottom: 0.4rem; margin-bottom: 1.25rem;">' + esc(state.navHeading.trim()) + '</h3>');
       }
-      out.push('  <ul style="display: flex; flex-wrap: wrap; list-style: none; padding: 0; margin: 0 -0.5rem 2rem -0.5rem;">');
-      chosen.forEach((m) => {
-        out.push('    <li style="display: flex; flex: 1 1 240px; margin: 0.5rem;">');
-        out.push('      <a style="' + buttonStyle(m.style) + '" href="/courses/' + courseId + '/modules/' + m.id + '">' + esc(m.label.trim() || m.name) + '</a>');
-        out.push('    </li>');
-      });
-      out.push('  </ul>');
+      // 4 / 2 / 1 layout with inline flexbox only (the Canvas mobile apps ignore theme CSS and
+      // media queries cannot be inline). Buttons are grouped in pairs: pairs sit side by side
+      // when there is room for four buttons (desktop), stack when there is room for two
+      // (tablet), and each pair splits into single full-width buttons on phones.
+      // No negative margins, which made the page slide sideways in the iPhone app.
+      out.push('  <div role="list" style="display: flex; flex-wrap: wrap; margin: 0 0 2rem 0; padding: 0;">');
+      for (let i = 0; i < chosen.length; i += 2) {
+        out.push('    <div style="display: flex; flex-wrap: wrap; flex: 1 1 420px; min-width: 0; box-sizing: border-box;">');
+        chosen.slice(i, i + 2).forEach((m) => {
+          out.push('      <div role="listitem" style="display: flex; flex: 1 1 210px; min-width: 0; padding: 0.375rem; box-sizing: border-box;">');
+          out.push('        <a style="' + buttonStyle(m.style) + '" href="/courses/' + courseId + '/modules/' + m.id + '">' + esc(m.label.trim() || m.name) + '</a>');
+          out.push('      </div>');
+        });
+        if (i + 1 === chosen.length) {
+          // Empty half keeps a lone last button the same width as the others; zero height on phones
+          out.push('      <div aria-hidden="true" style="flex: 1 1 210px; min-width: 0; padding: 0 0.375rem; box-sizing: border-box;"></div>');
+        }
+        out.push('    </div>');
+      }
+      out.push('  </div>');
     }
     out.push('</div>');
     return out.join('\n');

@@ -16,7 +16,7 @@ Open this repository's GitHub Pages site (linked in the About section) and drag 
 - Finds module names and IDs from the Canvas API automatically.
 - Generates inline-styled HTML, so Canvas keeps the design.
 - Meets WCAG 2.1 AA contrast in LMC Red (#A6192E) and Graves Gray (#54585A).
-- Buttons resize for phones and tablets.
+- Responsive buttons: 4 per row on desktop, 2 on tablets, 1 on phones, including in the Canvas mobile apps.
 - Read-only: nothing in your course changes until you paste and save the code.
 
 ## Versions
